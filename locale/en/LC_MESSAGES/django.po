@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Главная"
+msgstr "Home"
+
+msgid "Челленджи"
+msgstr "Challenges"
+
+msgid "Эко-Карта"
+msgstr "Eco Map"
+
+msgid "Рейтинг"
+msgstr "Leaderboard"
+
+msgid "Войти"
+msgstr "Login"
+
+msgid "Регистрация"
+msgstr "Register"
+
+msgid "Выйти"
+msgstr "Logout"
+
+msgid "Присоединиться"
+msgstr "Join Now"
+
+msgid "Открыть карту"
+msgstr "Open Map"
+
+msgid "Делаем Кыргызстан чище вместе"
+msgstr "Making Kyrgyzstan cleaner together"
+
+msgid "Жашыл Кыргызстан"
+msgstr "Green Kyrgyzstan"
+
+msgid "Отмечай проблемы на карте. Выполняй челленджи. Меняй страну."
+msgstr "Mark problems on the map. Complete challenges. Change the country."
+
+msgid "Участников"
+msgstr "Participants"
+
+msgid "Челленджей"
+msgstr "Challenges"
+
+msgid "Деревьев посажено"
+msgstr "Trees planted"
+
+msgid "Проблем решено"
+msgstr "Problems solved"
+
+msgid "Популярные челленджи"
+msgstr "Popular challenges"
+
+msgid "Как это работает?"
+msgstr "How does it work?"
+
+msgid "Участвовать"
+msgstr "Join"
+
+msgid "Экология"
+msgstr "Ecology"
+
+msgid "Вода"
+msgstr "Water"
+
+msgid "Убери мусор в парке"
+msgstr "Clean up the park"
+
+msgid "Посади дерево"
+msgstr "Plant a tree"
+
+msgid "Очисти берег реки"
+msgstr "Clean the riverbank"
+
+msgid "Отметь проблему"
+msgstr "Mark a problem"
+
+msgid "Выполни челлендж"
+msgstr "Complete a challenge"
+
+msgid "Получи баллы"
+msgstr "Earn points"

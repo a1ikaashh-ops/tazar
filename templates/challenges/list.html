@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Челленджи — Жашыл KG{% endblock %}
+
+{% block extra_css %}
+<style>
+.challenges-hero {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2D6A4F 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.challenges-hero h1 { font-size: 2.5rem; font-weight: 800; }
+.challenges-hero p { opacity: 0.9; margin-top: 0.5rem; }
+
+.challenges-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: start;
+}
+
+.filter-bar {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem auto;
+    max-width: 1200px;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    box-shadow: var(--shadow);
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1.2rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 20px;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.filter-btn.active, .filter-btn:hover {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+}
+
+.challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.challenge-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.challenge-card:hover { transform: translateY(-4px); }
+
+.challenge-card-img {
+    height: 160px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+}
+
+.challenge-card-body {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.challenge-card-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.challenge-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.challenge-card-text {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.challenge-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.points-badge {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.sidebar-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--bg);
+}
+
+.lb-name { flex: 1; font-weight: 600; }
+.lb-points { color: var(--primary); font-weight: 700; }
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-light);
+}
+
+.empty-state div { font-size: 3rem; margin-bottom: 1rem; }
+
+.challenge-card.hidden { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="challenges-hero">
+    <h1> ♻ Эко-Челленджи</h1>
+    <p>Выполняй задания, зарабатывай баллы и меняй Кыргызстан</p>
+</div>
+
+<!-- ФИЛЬТРЫ -->
+<div class="filter-bar" style="max-width:1200px; margin: 1.5rem auto;">
+    <span style="font-weight:600;">Фильтр:</span>
+    <button class="filter-btn active" onclick="filterChallenges('all', this)">Все</button>
+    <button class="filter-btn" onclick="filterChallenges('ecology', this)">Экология</button>
+    <button class="filter-btn" onclick="filterChallenges('culture', this)">Культура</button>
+    <button class="filter-btn" onclick="filterChallenges('volunteer', this)">Волонтёрство</button>
+</div>
+
+<div class="challenges-container">
+    <!-- СПИСОК ЧЕЛЛЕНДЖЕЙ -->
+    <div>
+        {% if challenges %}
+        <div class="challenges-grid" id="challengesGrid">
+            {% for challenge in challenges %}
+            <div class="challenge-card" data-category="{{ challenge.category }}">
+                <div class="challenge-card-img" style="
+    background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)),
+     {% if challenge.category == 'ecology' %}
+    url('https://cdn.iz.ru/sites/default/files/styles/900x506/public/article-2017-08/TASS_21554844.jpg?itok=TVufm6_V');
+    {% elif challenge.category == 'culture' %}
+    url('https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=600&q=80');
+    {% else %}
+    url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&q=80');
+    {% endif %}
+    background-size: cover;
+    background-position: center;
+">
+</div>
+                <div class="challenge-card-body">
+                    <div class="challenge-card-tags">
+                        <span class="badge badge-green">{{ challenge.get_category_display }}</span>
+                        {% if challenge.difficulty == 'easy' %}
+                            <span class="badge badge-green">Лёгкий</span>
+                        {% elif challenge.difficulty == 'medium' %}
+                            <span class="badge badge-orange">Средний</span>
+                        {% else %}
+                            <span class="badge badge-red">Сложный</span>
+                        {% endif %}
+                    </div>
+                    <h3 class="challenge-card-title">{{ challenge.title }}</h3>
+                    <p class="challenge-card-text">{{ challenge.description|truncatechars:80 }}</p>
+                    <div class="challenge-card-footer">
+                        <span class="points-badge">🟡 +{{ challenge.points }} pts</span>
+                        <a href="/challenges/{{ challenge.pk }}/" class="btn-primary">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div>♻️</div>
+            <h3>Челленджей пока нет</h3>
+            <p>Администратор скоро добавит задания!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- САЙДБАР -->
+<div>
+    <div class="sidebar-card">
+        <div class="sidebar-title" style="display:flex; align-items:center; gap:0.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="6"></circle>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+            </svg>
+            Топ участников
+        </div>
+        <div class="leaderboard-item">
+            <span style="color:#f59e0b; font-weight:800;">1</span>
+            <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#2D6A4F,#74C69D); display:flex; align-items:center; justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="lb-name">Айбек</span>
+            <span class="lb-points">1,240 pts</span>
+        </div>
+        <div class="leaderboard-item">
+            <span style="color:#9ca3af; font-weight:800;">2</span>
+            <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#2D6A4F,#74C69D); display:flex; align-items:center; justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="lb-name">Гүлнара</span>
+            <span class="lb-points">980 pts</span>
+        </div>
+        <div class="leaderboard-item">
+            <span style="color:#cd7c2f; font-weight:800;">3</span>
+            <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#2D6A4F,#74C69D); display:flex; align-items:center; justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="lb-name">Манас</span>
+            <span class="lb-points">760 pts</span>
+        </div>
+        <div class="leaderboard-item">
+            <span style="color:var(--text-light); font-weight:800;">4</span>
+            <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#2D6A4F,#74C69D); display:flex; align-items:center; justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="lb-name">Зарина</span>
+            <span class="lb-points">640 pts</span>
+        </div>
+        <div class="leaderboard-item">
+            <span style="color:var(--text-light); font-weight:800;">5</span>
+            <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#2D6A4F,#74C69D); display:flex; align-items:center; justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="lb-name">Тимур</span>
+            <span class="lb-points">520 pts</span>
+        </div>
+    </div>
+
+    <div class="sidebar-card">
+        <div class="sidebar-title" style="display:flex; align-items:center; gap:0.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Статистика
+        </div>
+        <div class="leaderboard-item">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                    <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/>
+                    <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/>
+                    <path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/>
+                    <path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/>
+                    <path d="m13.378 9.633 4.096 1.098 1.097-4.096"/>
+                </svg>
+                Всего челленджей
+            </div>
+            <span class="lb-points">{{ challenges.count }}</span>
+        </div>
+        <div class="leaderboard-item">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Участников
+            </div>
+            <span class="lb-points">2,400</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterChallenges(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.challenge-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+}
+</script>
+{% endblock %}

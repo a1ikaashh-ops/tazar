@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ challenge.title }} — Жашыл KG{% endblock %}
+
+{% block extra_css %}
+<style>
+.detail-hero {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2D6A4F 100%);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.detail-hero h1 { font-size: 2.5rem; font-weight: 800; }
+
+.detail-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.detail-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.detail-description {
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.points-big {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.btn-take {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-take:hover { background: #1f4d38; }
+
+.btn-taken {
+    width: 100%;
+    padding: 1rem;
+    background: #d1fae5;
+    color: #065f46;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    display: block;
+}
+
+.requirements li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--bg);
+    color: var(--text-light);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="detail-hero">
+    <div style="font-size:4rem; margin-bottom:1rem;">
+        {% if challenge.category == 'ecology' %}♻️
+        {% elif challenge.category == 'culture' %}🏔️
+        {% else %}🤝{% endif %}
+    </div>
+    <h1>{{ challenge.title }}</h1>
+</div>
+
+<div class="detail-container">
+    <div class="detail-card">
+        <div class="detail-tags">
+            <span class="badge badge-green">{{ challenge.get_category_display }}</span>
+            {% if challenge.difficulty == 'easy' %}
+                <span class="badge badge-green">Лёгкий</span>
+            {% elif challenge.difficulty == 'medium' %}
+                <span class="badge badge-orange">Средний</span>
+            {% else %}
+                <span class="badge badge-red">Сложный</span>
+            {% endif %}
+        </div>
+
+        <p class="detail-description">{{ challenge.description }}</p>
+
+        <div class="points-big">🟡 +{{ challenge.points }} баллов за выполнение</div>
+
+        {% if user.is_authenticated %}
+            {% if user_challenge %}
+                <div class="btn-taken">✅ Вы уже участвуете в этом челлендже!</div>
+            {% else %}
+                <a href="/challenges/{{ challenge.pk }}/take/" class="btn-take">
+                    Принять челлендж
+                </a>
+            {% endif %}
+        {% else %}
+            <a href="/login/" class="btn-take">Войди чтобы участвовать</a>
+        {% endif %}
+    </div>
+
+    <div class="detail-card">
+        <h3 style="margin-bottom:1rem;">📋 Требования</h3>
+        <ul class="requirements" style="list-style:none; padding:0;">
+            <li>📸 Загрузи фото-доказательство выполнения</li>
+            <li>📍 Отметь место на эко-карте</li>
+            <li>✅ Дождись подтверждения модератора</li>
+            <li>🏆 Получи баллы и значок</li>
+        </ul>
+    </div>
+
+    <a href="/challenges/" style="color: var(--primary); text-decoration:none; font-weight:600;">
+        ← Назад к челленджам
+    </a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Команды — Жашыл KG{% endblock %}
+
+{% block extra_css %}
+<style>
+.teams-hero {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2D6A4F 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.teams-hero p { opacity: 0.9; margin-top: 0.5rem; }
+
+.teams-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.teams-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.team-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.team-card:hover { transform: translateY(-4px); }
+
+.team-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.team-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-name { font-size: 1.2rem; font-weight: 700; }
+.team-members { color: var(--text-light); font-size: 0.9rem; }
+
+.team-desc {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.team-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.team-stat {
+    background: var(--bg);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.team-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-light);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="teams-hero">
+    <h1 style="display:flex; align-items:center; justify-content:center; gap:0.8rem; font-size:2.5rem; font-weight:800;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Команды
+    </h1>
+    <p>Объединяйтесь и меняйте Кыргызстан вместе!</p>
+</div>
+
+<div class="teams-container">
+    <div class="teams-header">
+        <h2>Все команды ({{ teams.count }})</h2>
+        <a href="/teams/create/" class="btn-primary">+ Создать команду</a>
+    </div>
+
+    {% if teams %}
+    <div class="teams-grid">
+        {% for team in teams %}
+        <div class="team-card">
+            <div class="team-card-header">
+                <div class="team-avatar">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="team-name">{{ team.name }}</div>
+                    <div class="team-members">{{ team.members.count }} участников</div>
+                </div>
+            </div>
+
+            {% if team.description %}
+            <p class="team-desc">{{ team.description|truncatechars:100 }}</p>
+            {% endif %}
+
+            <div class="team-stats">
+                <div class="team-stat">{{ team.total_points }} pts</div>
+                <div class="team-stat">{{ team.members.count }} участников</div>
+            </div>
+
+            <div class="team-footer">
+                <a href="/teams/{{ team.pk }}/" class="btn-outline">Подробнее</a>
+                {% if user not in team.members.all %}
+                <a href="/teams/{{ team.pk }}/join/" class="btn-primary">Вступить</a>
+                {% else %}
+                <span class="badge badge-green">Вы в команде</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        </div>
+        <h3>Команд пока нет</h3>
+        <p>Создай первую команду!</p>
+        <a href="/teams/create/" class="btn-primary" style="display:inline-block; margin-top:1rem;">Создать команду</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

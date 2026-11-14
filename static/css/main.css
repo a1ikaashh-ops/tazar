@@ -1,0 +1,336 @@
+/* ===== ПЕРЕМЕННЫЕ ===== */
+:root {
+    --primary: #2D6A4F;
+    --primary-light: #74C69D;
+    --accent: #F4A261;
+    --bg: #F8F9FA;
+    --card-bg: #FFFFFF;
+    --text: #1A1A2E;
+    --text-light: #6B7280;
+    --shadow: 0 2px 15px rgba(0,0,0,0.08);
+    --radius: 12px;
+}
+
+/* ТЁМНАЯ ТЕМА */
+body.dark-mode {
+    --bg: #0D1117;
+    --card-bg: #161B22;
+    --text: #E6EDF3;
+    --text-light: #8B949E;
+    --shadow: 0 2px 15px rgba(0,0,0,0.3);
+}
+
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+/* ===== НАВБАР ===== */
+.navbar {
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0 2rem;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 65px;
+}
+
+.nav-logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--primary); }
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* ===== КНОПКИ ===== */
+.btn-primary {
+    background: var(--primary);
+    color: white !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover { background: #1f4d38; }
+
+.btn-outline {
+    border: 2px solid var(--primary);
+    color: var(--primary) !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    color: white !important;
+}
+
+/* ===== ТЕМА ===== */
+.theme-btn {
+    background: none;
+    border: 2px solid var(--text-light);
+    color: var(--text);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ===== ЯЗЫК ===== */
+.lang-switcher { position: relative; }
+
+.lang-btn {
+    background: none;
+    border: 2px solid var(--text-light);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.lang-dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-width: 150px;
+}
+
+.lang-dropdown.show { display: block; }
+
+.lang-dropdown a {
+    display: block;
+    padding: 0.7rem 1rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: background 0.2s;
+}
+
+.lang-dropdown a:hover { background: var(--bg); }
+
+/* ===== ГЕРОЙ ===== */
+.hero {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2D6A4F 50%, #52b788 100%);
+    color: white;
+    padding: 6rem 2rem;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-white {
+    background: white;
+    color: var(--primary);
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.btn-white:hover { transform: translateY(-2px); }
+
+.btn-transparent {
+    border: 2px solid white;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+/* ===== СТАТИСТИКА ===== */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding: 3rem 2rem;
+    background: var(--card-bg);
+}
+
+.stat-item { text-align: center; }
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* ===== КАРТОЧКИ ===== */
+.section {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.card:hover { transform: translateY(-4px); }
+
+.card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.card-body { padding: 1.2rem; }
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #9a3412; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+
+/* ===== ФУТЕР ===== */
+.footer {
+    background: #0D1117;
+    color: #8B949E;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
+
+.footer-logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 0.5rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.footer-links a {
+    color: #8B949E;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--primary-light); }
+.lang-dropdown form { display: flex; flex-direction: column; }
+.lang-dropdown button {
+    background: none;
+    border: none;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+.lang-dropdown button:hover { background: var(--bg); }

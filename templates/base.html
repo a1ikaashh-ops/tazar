@@ -1,0 +1,75 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Жашыл Кыргызстан{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="light-mode">
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo"> TAZAR</a>
+
+        <div class="nav-links">
+            <a href="/">{% trans "Главная" %}</a>
+            <a href="/challenges/">{% trans "Челленджи" %}</a>
+            <a href="/ecomap/">{% trans "Эко-Карта" %}</a>
+            <a href="/teams/">{% trans "Команды" %}</a>
+            <a href="/leaderboard/">{% trans "Рейтинг" %}</a>
+        </div>
+
+        <div class="nav-right">
+            <div class="lang-switcher">
+                <button class="lang-btn" onclick="toggleLang()"> {{ LANGUAGE_CODE|upper }} ▾</button>
+                <div class="lang-dropdown" id="langDropdown">
+                    <form action="/i18n/setlang/" method="post">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="/">
+                        <button type="submit" name="language" value="ky"> KG</button>
+                        <button type="submit" name="language" value="ru"> RU</button>
+                        <button type="submit" name="language" value="en"> EN</button>
+                    </form>
+                </div>
+            </div>
+
+            <button class="theme-btn" onclick="toggleTheme()" title="Сменить тему">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+
+            {% if user.is_authenticated %}
+                <a href="/profile/" class="nav-avatar">{{ user.username }}</a>
+                <a href="/logout/" class="btn-outline">{% trans "Выйти" %}</a>
+            {% else %}
+                <a href="/login/" class="btn-outline">{% trans "Войти" %}</a>
+                <a href="/register/" class="btn-primary">{% trans "Регистрация" %}</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-logo"> TAZAR</div>
+        <p>{% trans "Делаем Кыргызстан чище вместе" %}</p>
+        <div class="footer-links">
+            <a href="/">{% trans "Главная" %}</a>
+            <a href="/challenges/">{% trans "Челленджи" %}</a>
+            <a href="/ecomap/">{% trans "Эко-Карта" %}</a>
+        </div>
+    </div>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

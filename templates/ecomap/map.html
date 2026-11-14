@@ -1,0 +1,493 @@
+{% extends 'base.html' %}
+
+{% block title %}Эко-Карта — Жашыл KG{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+.map-page { position: relative; }
+
+#map {
+    height: calc(100vh - 65px);
+    width: 100%;
+    z-index: 1;
+}
+
+.map-stats {
+    background: var(--card-bg);
+    padding: 0.7rem 2rem;
+    display: flex;
+    gap: 2rem;
+    box-shadow: var(--shadow);
+    z-index: 100;
+}
+
+.map-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ФИЛЬТР ПАНЕЛЬ */
+.filter-panel {
+    position: absolute;
+    top: 120px;
+    left: 20px;
+    z-index: 1000;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 220px;
+}
+
+body.dark-mode .filter-panel {
+    background: rgba(22,27,34,0.95);
+}
+
+.dark-map-tiles {
+    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+.filter-panel h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filter-item input { cursor: pointer; }
+
+.btn-add-point {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-add-point:hover { background: #1f4d38; }
+
+/* МОДАЛ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+.modal-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.modal-input:focus { outline: none; border-color: var(--primary); }
+
+.modal-btns { display: flex; gap: 1rem; margin-top: 0.5rem; }
+
+.btn-cancel {
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.btn-save {
+    flex: 1;
+    padding: 0.8rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.map-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 1000;
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-page">
+
+    <!-- СТАТИСТИКА -->
+    <div class="map-stats">
+    <div class="map-stat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="red" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Свалки: <span id="countTrash">0</span>
+    </div>
+    <div class="map-stat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#3b82f6" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Реки: <span id="countWater">0</span>
+    </div>
+    <div class="map-stat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f97316" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Лес: <span id="countForest">0</span>
+    </div>
+    <div class="map-stat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#22c55e" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Решено: <span id="countResolved">0</span>
+    </div>
+</div>
+
+    <!-- КАРТА -->
+    <div id="map"></div>
+
+    <!-- ФИЛЬТР ПАНЕЛЬ -->
+    <div class="filter-panel">
+    <h3 style="display:flex; align-items:center; gap:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        Фильтр
+    </h3>
+
+    <label class="filter-item">
+        <input type="checkbox" checked onchange="filterMarkers()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="red" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Мусорные свалки
+    </label>
+    <label class="filter-item">
+        <input type="checkbox" checked onchange="filterMarkers()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#3b82f6" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Загрязнённые реки
+    </label>
+    <label class="filter-item">
+        <input type="checkbox" checked onchange="filterMarkers()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f97316" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Вырубка леса
+    </label>
+    <label class="filter-item">
+        <input type="checkbox" checked onchange="filterMarkers()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#a855f7" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Загрязнение воздуха
+    </label>
+    <label class="filter-item">
+        <input type="checkbox" checked onchange="filterMarkers()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#22c55e" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+        Решено
+    </label>
+
+    {% if user.is_authenticated %}
+    <button class="btn-add-point" onclick="startAddPoint()" style="display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Добавить точку
+    </button>
+    {% else %}
+    <a href="/login/" class="btn-add-point" style="display:block; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Войди чтобы добавить
+    </a>
+    {% endif %}
+</div>
+
+    <!-- ПОДСКАЗКА -->
+    <div class="map-hint" id="mapHint">📍 Кликни на карту чтобы добавить точку</div>
+
+</div>
+
+<!-- МОДАЛ ДОБАВЛЕНИЯ ТОЧКИ -->
+<!-- ПОДСКАЗКА -->
+<div class="map-hint" id="mapHint" style="display:flex; align-items:center; gap:0.5rem;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+    </svg>
+    Кликни на карту чтобы добавить точку
+</div>
+
+</div>
+
+<!-- МОДАЛ ДОБАВЛЕНИЯ ТОЧКИ -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <h3 style="display:flex; align-items:center; gap:0.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Добавить точку
+        </h3>
+        <input type="text" class="modal-input" id="pointTitle" placeholder="Название проблемы">
+        <textarea class="modal-input" id="pointDesc" placeholder="Описание" rows="3"></textarea>
+        <select class="modal-input" id="pointType">
+            <option value="trash">Мусорная свалка</option>
+            <option value="water">Загрязнённая река</option>
+            <option value="forest">Вырубка леса</option>
+            <option value="air">Загрязнение воздуха</option>
+        </select>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()" style="display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                Отмена
+            </button>
+            <button class="btn-save" onclick="savePoint()" style="display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Сохранить
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const pointsData = {{ points_json|safe }};
+let map, markers = [], addingMode = false, tempLat, tempLng;
+
+function getCsrfToken() {
+    const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (tokenInput) return tokenInput.value;
+
+    const cookie = document.cookie
+        .split('; ')
+        .find(item => item.startsWith('csrftoken='));
+    return cookie ? decodeURIComponent(cookie.slice('csrftoken='.length)) : '';
+}
+
+// Инициализация карты
+map = L.map('map').setView([41.2044, 74.7661], 7);
+
+const lightTile = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+});
+
+const darkTile = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    className: 'dark-map-tiles'
+});
+
+const isDark = document.body.classList.contains('dark-mode') || localStorage.getItem('theme') === 'dark';
+if (isDark) {
+    darkTile.addTo(map);
+} else {
+    lightTile.addTo(map);
+}
+
+const themeBtn = document.querySelector('.theme-btn');
+if (themeBtn) {
+    themeBtn.addEventListener('click', function() {
+        setTimeout(() => {
+            const dark = document.body.classList.contains('dark-mode');
+            if (dark) {
+                map.removeLayer(lightTile);
+                darkTile.addTo(map);
+            } else {
+                map.removeLayer(darkTile);
+                lightTile.addTo(map);
+            }
+        }, 100);
+    });
+}
+
+// Цвета маркеров
+const colors = {
+    'trash': '🔴',
+    'water': '🔵',
+    'forest': '🟠',
+    'air': '🟣',
+};
+
+// Добавляем точки на карту
+function addMarkers(points) {
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    
+    let counts = {trash:0, water:0, forest:0, resolved:0};
+    
+    points.forEach(p => {
+        const icon = L.divIcon({
+            html: `<div style="font-size:24px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5))">
+                ${p.status === 'resolved' ? '🟢' : (colors[p.type] || '📍')}
+            </div>`,
+            className: '',
+            iconSize: [30, 30],
+        });
+
+        const marker = L.marker([p.lat, p.lng], {icon})
+    .addTo(map)
+    .bindPopup(`
+        <div style="min-width:200px">
+            <b>${p.title}</b><br>
+            <small>${p.description}</small><br><br>
+            <span>👤 ${p.reported_by}</span><br>
+            <span>${p.status === 'resolved' ? '✅ Решено' : '⚠️ Требует внимания'}</span><br><br>
+            {% if user.is_authenticated %}
+            <button onclick="deletePoint(${p.id})" style="background:#ef4444; color:white; border:none; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; width:100%;">
+                🗑️ Удалить точку
+            </button>
+            {% endif %}
+        </div>
+    `);
+        
+        markers.push(marker);
+
+        if (p.status === 'resolved') counts.resolved++;
+        else if (p.type === 'trash') counts.trash++;
+        else if (p.type === 'water') counts.water++;
+        else if (p.type === 'forest') counts.forest++;
+    });
+
+    document.getElementById('countTrash').textContent = counts.trash;
+    document.getElementById('countWater').textContent = counts.water;
+    document.getElementById('countForest').textContent = counts.forest;
+    document.getElementById('countResolved').textContent = counts.resolved;
+}
+
+addMarkers(pointsData);
+
+// Добавление точки
+function startAddPoint() {
+    addingMode = true;
+    document.getElementById('mapHint').style.display = 'block';
+}
+
+map.on('click', function(e) {
+    if (!addingMode) return;
+    tempLat = e.latlng.lat;
+    tempLng = e.latlng.lng;
+    addingMode = false;
+    document.getElementById('mapHint').style.display = 'none';
+    document.getElementById('modalOverlay').classList.add('show');
+});
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+    document.getElementById('pointTitle').value = '';
+    document.getElementById('pointDesc').value = '';
+}
+
+function savePoint() {
+    const title = document.getElementById('pointTitle').value;
+    const desc = document.getElementById('pointDesc').value;
+    const type = document.getElementById('pointType').value;
+
+    if (!title) { alert('Введи название!'); return; }
+
+    fetch('/ecomap/add/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({title, description: desc, type, lat: tempLat, lng: tempLng})
+    })
+    .then(async response => {
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера (${response.status})`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'ok') {
+            closeModal();
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Не удалось сохранить точку');
+        }
+    })
+    .catch(error => {
+        console.error('Не удалось добавить точку на карту:', error);
+        alert(`Не удалось добавить точку: ${error.message}`);
+    });
+}
+
+function filterMarkers() { }
+
+function deletePoint(id) {
+    if (!confirm('Удалить эту точку?')) return;
+    fetch(`/ecomap/delete/${id}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(async response => {
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера (${response.status})`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'ok') location.reload();
+        else throw new Error(data.message || 'Не удалось удалить точку');
+    })
+    .catch(error => {
+        console.error('Не удалось удалить точку с карты:', error);
+        alert(`Не удалось удалить точку: ${error.message}`);
+    });
+}
+</script>
+{% endblock %}
