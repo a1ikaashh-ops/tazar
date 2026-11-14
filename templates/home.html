@@ -108,38 +108,38 @@
 <!-- ЧЕЛЛЕНДЖИ -->
 <section class="section">
     <h2 class="section-title"> {% trans "Популярные челленджи" %}</h2>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+    <div class="challenge-grid">
         
-        <div style="background: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;">
-            <div style="height: 200px; background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://ecostan.kg/uploads/posts/2025-03/musor-27.jpg'); background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 1rem;">
-                <span style="background: #2D6A4F; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;"> Экология</span>
+        <div class="challenge-card">
+            <div class="challenge-card-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://ecostan.kg/uploads/posts/2025-03/musor-27.jpg');">
+                <span class="challenge-badge"> Экология</span>
             </div>
-            <div style="padding: 1.2rem; display: flex; flex-direction: column; flex: 1;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">{% trans "Убери мусор в парке" %}</h3>
-                <p style="color: var(--text-light); font-size: 0.9rem; flex: 1; margin-bottom: 1rem;">{% trans "Собери мусор в ближайшем парке и загрузи фото-отчёт" %}</p>
-                <a href="/challenges/" class="btn-primary" style="text-align: center; margin-top: auto;">{% trans "Участвовать" %} +50 pts</a>
-            </div>
-        </div>
-
-        <div style="background: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;">
-            <div style="height: 200px; background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://lifehacker.ru/wp-content/uploads/2022/05/1101307937_1652438580.jpg'); background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 1rem;">
-                <span style="background: #2D6A4F; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;"> Экология</span>
-            </div>
-            <div style="padding: 1.2rem; display: flex; flex-direction: column; flex: 1;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">{% trans "Посади дерево" %}</h3>
-                <p style="color: var(--text-light); font-size: 0.9rem; flex: 1; margin-bottom: 1rem;">{% trans "Посади дерево и отметь его на эко-карте" %}</p>
-                <a href="/challenges/" class="btn-primary" style="text-align: center; margin-top: auto;">{% trans "Участвовать" %} +100 pts</a>
+            <div class="challenge-card-body">
+                <h3>{% trans "Убери мусор в парке" %}</h3>
+                <p>{% trans "Собери мусор в ближайшем парке и загрузи фото-отчёт" %}</p>
+                <a href="/challenges/" class="btn-primary challenge-link">{% trans "Участвовать" %} +50 pts</a>
             </div>
         </div>
 
-        <div style="background: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;">
-            <div style="height: 200px; background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://www.infpol.ru/upload/iblock/2d2/clhx93acucx3yhrf2kwc72zig02217is.jpg'); background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 1rem;">
-                <span style="background: #1d6fa4; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;"> Вода</span>
+        <div class="challenge-card">
+            <div class="challenge-card-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://lifehacker.ru/wp-content/uploads/2022/05/1101307937_1652438580.jpg');">
+                <span class="challenge-badge"> Экология</span>
             </div>
-            <div style="padding: 1.2rem; display: flex; flex-direction: column; flex: 1;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">{% trans "Очисти берег реки" %}</h3>
-                <p style="color: var(--text-light); font-size: 0.9rem; flex: 1; margin-bottom: 1rem;">{% trans "Организуй или участвуй в очистке берега реки" %}</p>
-                <a href="/challenges/" class="btn-primary" style="text-align: center; margin-top: auto;">{% trans "Участвовать" %} +150 pts</a>
+            <div class="challenge-card-body">
+                <h3>{% trans "Посади дерево" %}</h3>
+                <p>{% trans "Посади дерево и отметь его на эко-карте" %}</p>
+                <a href="/challenges/" class="btn-primary challenge-link">{% trans "Участвовать" %} +100 pts</a>
+            </div>
+        </div>
+
+        <div class="challenge-card">
+            <div class="challenge-card-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://www.infpol.ru/upload/iblock/2d2/clhx93acucx3yhrf2kwc72zig02217is.jpg');">
+                <span class="challenge-badge challenge-badge-blue"> Вода</span>
+            </div>
+            <div class="challenge-card-body">
+                <h3>{% trans "Очисти берег реки" %}</h3>
+                <p>{% trans "Организуй или участвуй в очистке берега реки" %}</p>
+                <a href="/challenges/" class="btn-primary challenge-link">{% trans "Участвовать" %} +150 pts</a>
             </div>
         </div>
 
@@ -147,62 +147,41 @@
 </section>
 
 <!-- КАК ЭТО РАБОТАЕТ -->
-<section style="background: var(--card-bg); padding: 5rem 2rem;">
-    <div style="max-width: 1100px; margin: 0 auto;">
+<section class="how-it-works">
+    <div class="how-it-works-inner">
         <h2 class="section-title">{% trans "Как это работает?" %}</h2>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+        <div class="steps-grid">
 
-            <div style="text-align: center; padding: 2rem;">
-                <div style="
-                    width: 80px; height: 80px;
-                    background: #2D6A4F;
-                    border-radius: 50%;
-                    display: flex; align-items: center; justify-content: center;
-                    margin: 0 auto 1.5rem;
-                    box-shadow: 0 8px 25px rgba(45,106,79,0.3);
-                ">
+            <div class="step-card">
+                <div class="step-icon">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                         <circle cx="12" cy="10" r="3"></circle>
                     </svg>
                 </div>
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem;">1. {% trans "Отметь проблему" %}</h3>
-                <p style="color: var(--text-light); line-height: 1.6;">{% trans "Найди экологическую проблему рядом и отметь её на карте" %}</p>
+                <h3>1. {% trans "Отметь проблему" %}</h3>
+                <p>{% trans "Найди экологическую проблему рядом и отметь её на карте" %}</p>
             </div>
 
-            <div style="text-align: center; padding: 2rem;">
-                <div style="
-                    width: 80px; height: 80px;
-                    background: #2D6A4F;
-                    border-radius: 50%;
-                    display: flex; align-items: center; justify-content: center;
-                    margin: 0 auto 1.5rem;
-                    box-shadow: 0 8px 25px rgba(45,106,79,0.3);
-                ">
+            <div class="step-card">
+                <div class="step-icon">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                 </div>
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem;">2. {% trans "Выполни челлендж" %}</h3>
-                <p style="color: var(--text-light); line-height: 1.6;">{% trans "Возьми задание, реши проблему и загрузи фото-доказательство" %}</p>
+                <h3>2. {% trans "Выполни челлендж" %}</h3>
+                <p>{% trans "Возьми задание, реши проблему и загрузи фото-доказательство" %}</p>
             </div>
 
-            <div style="text-align: center; padding: 2rem;">
-                <div style="
-                    width: 80px; height: 80px;
-                    background: #2D6A4F;
-                    border-radius: 50%;
-                    display: flex; align-items: center; justify-content: center;
-                    margin: 0 auto 1.5rem;
-                    box-shadow: 0 8px 25px rgba(45,106,79,0.3);
-                ">
+            <div class="step-card">
+                <div class="step-icon">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                         <circle cx="12" cy="8" r="6"></circle>
                         <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
                     </svg>
                 </div>
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem;">3. {% trans "Получи баллы" %}</h3>
-                <p style="color: var(--text-light); line-height: 1.6;">{% trans "Зарабатывай баллы, значки и попади в топ рейтинга" %}</p>
+                <h3>3. {% trans "Получи баллы" %}</h3>
+                <p>{% trans "Зарабатывай баллы, значки и попади в топ рейтинга" %}</p>
             </div>
 
         </div>
